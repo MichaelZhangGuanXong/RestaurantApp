@@ -5,7 +5,7 @@ A example code for restful API to book/lookup reservation by using mu-server dep
 
 1 Repository to simulate JPA repository, just like save/lookup from DB
 
-Testing can be implemented by Postman like:
+Testing can be implemented by Postman like: (clone project, open in IntelliJ, the run RestaurantApp in your local machine)
 Lookup by day - url get - https://localhost:8080/reservations/{yyyy-mm-dd}
 ![image](https://github.com/MichaelZhangGuanXong/RestaurantApp/assets/155645589/92560dcf-999b-4b7d-be80-daa3d2c2d384)
 
