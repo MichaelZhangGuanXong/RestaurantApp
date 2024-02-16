@@ -6,6 +6,9 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import io.muserver.Method;
 import io.muserver.MuServer;
 import io.muserver.MuServerBuilder;
+import io.muserver.handlers.ResourceHandlerBuilder;
+import io.muserver.rest.ApiResponse;
+import io.muserver.rest.Description;
 import io.muserver.rest.RestHandlerBuilder;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +20,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static io.muserver.ContextHandlerBuilder.context;
 import static michael.zhang.restaurant.repository.ReservationRepository.maxReservationHours;
 
 public class RestaurantApp {
@@ -46,13 +50,18 @@ public class RestaurantApp {
         MuServer server = MuServerBuilder
                 .httpServer()
                 .withHttpsPort(8080)
+                .addHandler(context("/")
+                        .addHandler(ResourceHandlerBuilder.classpathHandler("/")))
                 .addHandler(Method.GET, "/", (request, response, pathParams) -> response.write("Hello, world"))
                 .addHandler(RestHandlerBuilder.restHandler(reservations)
+                        .withOpenApiJsonUrl("/openapi.json")
+                        .withOpenApiHtmlUrl("/api.html")
                         .addCustomWriter(new JacksonJaxbJsonProvider())
                         .addCustomReader(new JacksonJaxbJsonProvider()))
                 .start();
 
         System.out.println("Started server at " + server.uri());
+        System.out.println("Started server at " + server.uri().resolve("/index.html"));
     }
 
     // This class just like a RestController in Spring Web, for "GET" should allow all user to run
@@ -76,7 +85,10 @@ public class RestaurantApp {
         @GET
         @Path("/{day}")
         @Produces("application/json")
-        public List<Reservation> lookupByDay(@PathParam("day") String day) {
+        @Description("Lookup reservations by the day")
+        @ApiResponse(code = "200", message = "Success")
+        @ApiResponse(code = "404", message = "No reservations with that day found")
+        public List<Reservation> lookupByDay(@Description("The day of reservation")@PathParam("day") String day) {
             List<Reservation> reservationsByDay = repository.lookupReservationsByDay(day);
 
             if (ObjectUtils.isEmpty(reservationsByDay)) {
@@ -94,7 +106,10 @@ public class RestaurantApp {
         @POST
         @Consumes("application/json")
         @Produces("application/json")
-        public Reservation book(BookRequest request) {
+        @Description("Book a reservation")
+        @ApiResponse(code = "201", message = "The reservation was booked")
+        @ApiResponse(code = "400", message = "The request was invalid")
+        public Reservation book(@Description("Json Request like: {\"customerName\": \"xxx\", \"tableSize\": 2, \"reservationDateTime\": \"2024-03-01\"}") BookRequest request) {
             if (request.reservationHours > maxReservationHours)
                 request.setReservationHours(maxReservationHours);
 

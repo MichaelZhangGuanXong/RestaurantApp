@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+    <head>
+        <title>Restaurant Reservation API Testing Page</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css">
+    </head>
+
+    <body>
+
+        <div class="well" style="background-color:#563D7C; color: #FFFFFF; margin-left: 0px; border-left-width: 2px;
+                border-left-color: #191906; border-right-width: 2px; border-right-color: #191906">
+
+            <h2 style="text-align: left">Restaurant Reservation API Testing Page</h2>
+            <p class="lead"></p>
+        </div>
+
+        <div class="container" id="container">
+
+            <div class="row" >
+                <div class="col-md-6">
+                    <div class="panel panel-default" >
+                        <div class="panel-heading" ><h3><strong>APIs</strong></h3>
+                        </div>
+                        <div class="panel-body" align="justify">
+                            <ul>
+                                <li>Lookup reservations for day: <br/>
+                                    <input  id="day" value="yyyy-mm-dd"  >
+                                    <button type="button" class="btn btn-success" id="lookupByDay">Lookup</button>
+                                </li><br/>
+                                <li>Book a reservation: <br/>
+                                    <form id="form" action="" method="post">
+                                        Customer Name: <input type="text" name="customerName", id="customerName"><br>
+                                        Table Size: <select name="tableSize" id="tableSize">
+                                                <option value="2" selected="selected">2</option>
+                                                <option value="4">4</option>
+                                                <option value="6">6</option>
+                                                <option value="8">8</option>
+                                            </select><br/>
+                                        Reservation DateTime: <input name="reservationDateTime" id="reservationDateTime" value="yyyy-mm-dd hh:mm:ss"><br>
+                                        Book Hours: <select name="reservationHours" id="reservationHours">
+                                                <option value="1">1</option>
+                                                <option value="2" selected="selected">2</option>
+                                            </select><br/>
+                                        <button type="button" class="btn btn-success" id="book">Book</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default" >
+                        <div class="panel-heading" ><h3><strong>Response</strong></h3>
+                        </div>
+                        <div class="panel-body" align="justify" id="response" >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+        <script   type="text/javascript">
+            $(document).ready(function()
+            {
+                $("#book").click(function()
+                {
+                    var url= "/reservations";
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        Accept: 'application/json',
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                                customerName: $('#customerName').val(),
+                                tableSize: $('#tableSize option:selected').val(),
+                                reservationDateTime: $('#reservationDateTime').val(),
+                                reservationHours: $('#reservationHours option:selected').val()
+                        }),
+
+                        success: function(msg)
+                        {
+                            alert(msg);
+                            $("#response").html(JSON.stringify(msg)).fadeIn("slow");
+                        },
+                        error: function(xhr, resp, text) {
+                            console.log(xhr, resp, text);
+                        }
+                    });
+                    return false;
+                });
+
+                $("#lookupByDay").click(function()
+                {
+                    var url= "/reservations/"+$('#day').val();
+
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        dataType: 'json',
+
+                        success: function(msg)
+                        {
+                            $("#response").html(JSON.stringify(msg)).fadeIn("slow");
+                        },
+                        error: function()
+                        {
+                            alert("Failed to lookup !!!");
+                        }
+                    });
+                    return false;
+                });
+
+            });
+        </script>
+
+    </body>
+</html>
