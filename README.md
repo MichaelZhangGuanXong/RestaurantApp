@@ -3,6 +3,10 @@ An example code for restful API to book/lookup reservation by using mu-server de
 
 Plan to use H2 as in-memory DB for testing, but so far H2 has conflict with mu server in default, need to find how to make it work.
 
+Mu Server maybe a fast way to create Restful API, but so far is not so popular. Lack hints when Google it.
+
+Nomal way is to use Spring Boot + Web + JPA + OpenAPI/Swagger + Eureka/ZooKeeper + Spring Clound to create Restful MicroService.
+
 2 API's can run: Http get to lookup restaurant reservations by day; Http post to book a reservation
 
 1 Repository to simulate JPA repository, just like save/lookup from DB
