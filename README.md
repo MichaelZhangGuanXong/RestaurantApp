@@ -1,5 +1,7 @@
 # RestaurantApp
-A example code for restful API to book/lookup reservation by using mu-server dependency
+An example code for restful API to book/lookup reservation by using mu-server dependency
+
+Plan to use H2 as in-memory DB for testing, but so far H2 has conflict with mu server in default, need to find how to make it work.
 
 2 API's can run: Http get to lookup restaurant reservations by day; Http post to book a reservation
 
